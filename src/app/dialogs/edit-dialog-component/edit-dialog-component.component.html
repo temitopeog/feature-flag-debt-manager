@@ -1,0 +1,39 @@
+<div class="center">
+  <h1 mat-dialog-title>Add Slack/Teams channel</h1>
+  <div mat-dialog-content>
+    <mat-card>
+        <form [formGroup]="editedForm" (ngSubmit)="updateForm()" fxLayout="column" fxLayoutGap="10px" class="mr-5 ml-5">
+            <mat-card-content>
+
+            <p>
+              <mat-form-field *ngIf="editedForm.contains('tag')">
+                  <mat-label>Split Tag</mat-label>
+                  <input placeholder="Split tag" autocomplete="off" matInput formControlName="tag" readonly required>
+              </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="outline" *ngIf="editedForm.contains('slack')">
+                    <mat-label>Slack Channel</mat-label>
+                    <input placeholder="Enter Slack channel" autocomplete="off" matInput formControlName="slack">
+                    <mat-error *ngIf="editedForm.get('slack')?.invalid">
+                            Please enter a slack channel name
+                    </mat-error>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="outline" *ngIf="editedForm.contains('teams')">
+                    <mat-label>Teams Channel</mat-label>
+                    <input placeholder="Enter Teams channel" autocomplete="off" matInput formControlName="teams" >
+                    <mat-error *ngIf="editedForm.get('teams')?.invalid">
+                            Please enter a valid Teams channel
+                    </mat-error>
+                </mat-form-field>
+            </p>
+            <div class="buttonCenter mb-2">
+                <button mat-flat-button type="submit" class="primary">Save</button>
+            </div>
+            </mat-card-content>
+            </form>
+    </mat-card>
+  </div>
+</div>

@@ -1,1 +1,36 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+
+html, body {
+  height: 100%;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden !important;
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.pointer{
+  cursor: pointer;
+}
+
+.form-group-wrapper {
+  display: flex;
+  margin:10px;
+}
+.form-group-wrapper .form-group{
+  flex-grow: 1;
+  flex-basis: 50%;
+  // padding: 8px;
+}
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  margin: 15px;
+}

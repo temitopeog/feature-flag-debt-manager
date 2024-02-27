@@ -1,0 +1,80 @@
+<div class="form-group-wrapper">
+  <div class="form-group" style="margin-right: 5px;">
+  <mat-form-field appearance="outline">
+    <mat-label>Workspace</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let option of workspaces | async" [value]="option.id"
+      (click)="selectWorkspace(option.id)">{{option.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field appearance="outline">
+      <mat-label>Active days</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let option of daysActive" [value]="option.value"
+        (click)="filterByDate(option.value)">{{option.key}}</mat-option>      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="center">
+  <mat-chip-listbox class="no-wrap" aria-label="Fish selection" style="margin-left: 10px; margin-right: 10px;">
+    <mat-chip-option (click)="filterByTags(tag)" *ngFor="let tag of uniqueTags">{{tag}}</mat-chip-option>
+  </mat-chip-listbox>
+</div>
+
+<div class="filter" *ngIf="wsId">
+  <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rolloutStatus">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+      <td mat-cell *matCellDef="let element"> {{element.rolloutStatus?.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rolloutStatusTimestamp">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Flag days </th>
+      <td mat-cell *matCellDef="let element"> {{calculateDiff(element.rolloutStatusTimestamp)}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tags">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Tags </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-list>
+          <mat-list-item role="listitem" *ngFor="let tag of element.tags">
+              {{tag.name}}
+          </mat-list-item>
+        </mat-list>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="owners">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Owners </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-list>
+          <mat-list-item role="listitem" *ngFor="let tag of element.owners">
+              {{tag.type}}
+          </mat-list-item>
+        </mat-list>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <tr class="mat-row" *matNoDataRow style="text-align: center;">
+      <td class="mat-cell" colspan="4">No data matching the filter</td>
+    </tr>
+  </table>
+</div>
+<div class="center">
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+showFirstLastButtons
+aria-label="Select page of periodic elements">
+</mat-paginator>
+</div>

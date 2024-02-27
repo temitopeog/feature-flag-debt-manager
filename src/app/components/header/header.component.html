@@ -1,0 +1,10 @@
+<p style="margin: 0%; padding: 0%;">
+  <mat-toolbar color="primary" class="mat-elevation-z4" style="position: sticky; top: 0;">
+    <span class="pointer" routerLinkActive="active" [routerLink]="['/home']">Flag Debt Manager</span>
+    <span class="example-spacer"></span>
+      <button *ngIf="message" (click)="sendInfo()" mat-stroked-button style="border-color: white;" color="white">Send flags to {{message}} team</button>
+      <button routerLinkActive="active" [routerLink]="['/config']" mat-icon-button matTooltip="accent" color="accent" aria-label="Example icon-button with a heart icon">
+        <mat-icon>settings</mat-icon>
+      </button>
+  </mat-toolbar>
+</p>

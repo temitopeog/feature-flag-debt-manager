@@ -1,0 +1,59 @@
+<!-- <p>config works!</p>
+<p>
+  show the tags on a list
+</p>
+<p>
+  persist tags on db
+</p>
+<p>
+  create column for tags on mongo
+</p>
+<p>
+  CRUD tags on database
+  tag, slack, teams
+</p> -->
+
+
+<div class="filter">
+  <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+      <td mat-cell *matCellDef="let i = dataIndex;"> {{ i + 1}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tag">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Tags </th>
+      <td mat-cell *matCellDef="let element"> {{element.tag}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="slack">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Slack Channel name </th>
+      <td mat-cell *matCellDef="let element"> {{element.slack}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="teams">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Teams Channel </th>
+      <td mat-cell *matCellDef="let element"> {{element.teams}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <button mat-icon-button color="primary">
+          <mat-icon aria-label="Example icon-button with a heart icon">edit</mat-icon>
+        </button>
+      </th>
+      <td mat-cell *matCellDef="let element; let i = dataIndex;">
+        <button mat-icon-button color="accent" (click)="startEdit(i, element.tag, element.slack, element.teams)">
+          <mat-icon aria-label="Edit">edit</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <tr class="mat-row" *matNoDataRow style="text-align: center;">
+      <td class="mat-cell" colspan="4">You do not have any tags / groups on Split at this moment</td>
+    </tr>
+  </table>
+</div>
