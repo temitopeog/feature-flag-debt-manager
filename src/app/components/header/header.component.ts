@@ -25,6 +25,7 @@ export class HeaderComponent implements OnInit  {
       this.slackService.sendMessage(data[0].slack, this.message).subscribe(
         (response) => {
           console.log('Message sent:', response);
+          alert('Message sent to slack channel');
           // Reset input fields or handle success message
         },
         error => {

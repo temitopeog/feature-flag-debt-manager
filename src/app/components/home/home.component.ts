@@ -13,7 +13,6 @@ import { MatPaginator } from '@angular/material/paginator';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnDestroy, AfterViewInit {
-
   wsId: string = '';
   dataSource = new MatTableDataSource<featureFlag>();
   dataStore: any;

@@ -11,6 +11,6 @@ export class SlackService {
   constructor(private http: HttpClient) {}
 
   sendMessage(channel: string, text: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/api/send-slack-notification`, { channel, text });
+    return this.http.post<any>(`${this.apiUrl}/send-slack-notification`, { channel, text });
   }
 }

@@ -11,6 +11,15 @@ const PORT = process.env.PORT || 3000;
 const cors = require("cors");
 const querystring = require("querystring");
 
+// Sample data from Angular service
+const sampleData = {
+  message: 'Hello from Angular service!',
+  timestamp: new Date().toLocaleString()
+};
+
+// Microsoft Teams webhook URL
+const teamsWebhookUrl = process.env.teamsWebhookUrl;
+
 app.use(bodyParser.json());
 app.use(cors({
   origin: "http://localhost:4200" // allow CORS for 4200
@@ -48,7 +57,7 @@ const blocks = [
   {
       "type": "divider"
   },
-  {
+  { // section for engineers names and statuses of the flags
       "type": "rich_text",
       "elements": [
           {
@@ -230,42 +239,9 @@ const blocks = [
               ]
           }
       ]
-  },
-  {
-      "type": "divider"
-  },
-  {
-      "type": "rich_text",
-      "elements": [
-          {
-              "type": "rich_text_section",
-              "elements": [
-                  {
-                      "type": "emoji",
-                      "name": "speech_balloon"
-                  },
-                  {
-                      "type": "text",
-                      "text": " Inspirational quote of the day",
-                      "style": {
-                          "bold": true
-                      }
-                  }
-              ]
-          },
-          {
-              "type": "rich_text_quote",
-              "elements": [
-                  {
-                      "type": "text",
-                      "text": "Having no destination I am never lost. - Ikkyū."
-                  }
-              ]
-          }
-      ]
   }
 ];
-app.post("/api/send-slack-notification", async (req, res) => {
+app.post("/send-slack-notification", async (req, res) => {
   try {
     const { channel, text } = req.body;
     const postData = querystring.stringify({
@@ -405,6 +381,51 @@ app.get("/get-user", (req, outRes) => {
     });
   });
   req.end();
+});
+
+// Route to send sample data to Microsoft Teams channel
+app.get('/send-teams-notification', async (req, res) => {
+  try {
+    // Create POST data
+    const postData = JSON.stringify({
+      text: `Sample Data:\nMessage: ${sampleData.message}\nTimestamp: ${sampleData.timestamp}`
+    });
+
+    // Set request options
+    const options = {
+      hostname: 'hooks.microsoft.com',
+      path: teamsWebhookUrl,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': postData.length
+      }
+    };
+
+    // Send request to Microsoft Teams webhook
+    const req = https.request(options, (response) => {
+      console.log(`Status code: ${response.statusCode}`);
+
+      response.on('data', (data) => {
+        console.log('Response:', data.toString());
+      });
+
+      response.on('end', () => {
+        res.send('Sample data sent to Teams channel successfully.');
+      });
+    });
+
+    req.on('error', (error) => {
+      console.error('Error sending data to Teams channel:', error);
+      res.status(500).send('Internal Server Error');
+    });
+
+    req.write(postData);
+    req.end();
+  } catch (error) {
+    console.error('Error sending data to Teams channel:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
