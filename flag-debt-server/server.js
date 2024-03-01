@@ -11,242 +11,21 @@ const PORT = process.env.PORT || 3000;
 const cors = require("cors");
 const querystring = require("querystring");
 
-// Sample data from Angular service
-const sampleData = {
-  message: 'Hello from Angular service!',
-  timestamp: new Date().toLocaleString()
-};
-
 // Microsoft Teams webhook URL
 const teamsWebhookUrl = process.env.teamsWebhookUrl;
+const teamsHostName = process.env.teamsHostName;
 
 app.use(bodyParser.json());
 app.use(cors({
   origin: "http://localhost:4200" // allow CORS for 4200
 })); // Add this line to enable CORS
 
-const blocks = [
-  {
-      "type": "header",
-      "text": {
-          "type": "plain_text",
-          "text": "Split IO Police"
-      }
-  },
-  {
-      "type": "context",
-      "elements": [
-          {
-              "type": "mrkdwn",
-              "text": "Hello there! This is a reminder to clean up / manage your feature flags"
-          }
-      ]
-  },
-  {
-      "type": "section",
-      "text": {
-          "type": "mrkdwn",
-          "text": ":wave:\n\n Below is the list of flags that requires your immediate attention."
-      },
-      "accessory": {
-          "type": "image",
-          "image_url": "https://media.giphy.com/media/bAQH7WXKqtIBrPs7sR/giphy.gif?cid=ecf05e47mqcqd2dnhxb3vr4ahr0jrlqh5op7n3gh689znkei&ep=v1_gifs_search&rid=giphy.gif&ct=g",
-          "alt_text": ""
-      }
-  },
-  {
-      "type": "divider"
-  },
-  { // section for engineers names and statuses of the flags
-      "type": "rich_text",
-      "elements": [
-          {
-              "type": "rich_text_section",
-              "elements": [
-                  {
-                      "type": "emoji",
-                      "name": "man"
-                  },
-                  {
-                      "type": "text",
-                      "text": " Engineer Name",
-                      "style": {
-                          "bold": true
-                      }
-                  }
-              ]
-          },
-          {
-              "type": "rich_text_list",
-              "style": "bullet",
-              "elements": [
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "Flag name - blah blah"
-                          }
-                      ]
-                  },
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "Status is: "
-                          },
-                          {
-                              "type": "link",
-                              "text": "killed",
-                              "url": "https://salesforcebenefits.com"
-                          }
-                      ]
-                  },
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "In status for: 100 days"
-                          }
-                      ]
-                  }
-              ]
-          }
-      ]
-  },
-  {
-      "type": "divider"
-  },
-  {
-      "type": "rich_text",
-      "elements": [
-          {
-              "type": "rich_text_section",
-              "elements": [
-                  {
-                      "type": "emoji",
-                      "name": "man"
-                  },
-                  {
-                      "type": "text",
-                      "text": " Engineer Name",
-                      "style": {
-                          "bold": true
-                      }
-                  }
-              ]
-          },
-          {
-              "type": "rich_text_list",
-              "style": "bullet",
-              "elements": [
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "Flag name - blah blah"
-                          }
-                      ]
-                  },
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "Status is: "
-                          },
-                          {
-                              "type": "link",
-                              "text": "100% released",
-                              "url": "https://salesforcebenefits.com"
-                          }
-                      ]
-                  },
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "In status for: 100 days"
-                          }
-                      ]
-                  }
-              ]
-          }
-      ]
-  },
-  {
-      "type": "divider"
-  },
-  {
-      "type": "rich_text",
-      "elements": [
-          {
-              "type": "rich_text_section",
-              "elements": [
-                  {
-                      "type": "emoji",
-                      "name": "man"
-                  },
-                  {
-                      "type": "text",
-                      "text": " Engineer Name",
-                      "style": {
-                          "bold": true
-                      }
-                  }
-              ]
-          },
-          {
-              "type": "rich_text_list",
-              "style": "bullet",
-              "elements": [
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "Flag name - blah blah"
-                          }
-                      ]
-                  },
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "Status is: "
-                          },
-                          {
-                              "type": "link",
-                              "text": "ramping",
-                              "url": "https://salesforcebenefits.com"
-                          }
-                      ]
-                  },
-                  {
-                      "type": "rich_text_section",
-                      "elements": [
-                          {
-                              "type": "text",
-                              "text": "In status for: 100 days"
-                          }
-                      ]
-                  }
-              ]
-          }
-      ]
-  }
-];
 app.post("/send-slack-notification", async (req, res) => {
   try {
-    const { channel, text } = req.body;
+    const { data, channel } = req.body;
     const postData = querystring.stringify({
       channel,
-      "blocks": JSON.stringify(blocks)
+      "blocks": JSON.stringify(data)
     });
 
     const options = {
@@ -280,6 +59,86 @@ app.post("/send-slack-notification", async (req, res) => {
     request.end();
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Sample data to send to Microsoft Teams channel
+const sampleData = JSON.stringify({
+  "type": "MessageCard",
+  "title": "Split IO Police 👮‍♂️",
+  "summary": "Hello there! This is a reminder to clean up / manage your feature flags \n",
+  "sections": [
+    {
+      "startGroup": true,
+      "images": [
+        {
+          "image": "https://media.giphy.com/media/bAQH7WXKqtIBrPs7sR/giphy.gif?cid=ecf05e47mqcqd2dnhxb3vr4ahr0jrlqh5op7n3gh689znkei&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+          "title": "Giphy"
+        }
+      ]
+    },
+    {
+      "startGroup": true,
+      "title": "\n **Below is the list of flags that requires your immediate attention**",
+      "text": "- Line 1\n  - First bullet point\n- Line 2\n  - Second bullet point"
+    },
+    {
+      "startGroup": true,
+      "activityImage": "https://example.com/image.png",
+      "activityTitle": "Additional Information",
+      "facts": [
+        {
+          "name": "Key 1",
+          "value": "Value 1"
+        },
+        {
+          "name": "Key 2",
+          "value": "Value 2"
+        }
+      ]
+    }
+  ]
+});
+// Route to send sample data to Microsoft Teams channel
+app.post('/send-teams-notification', async (req, res) => {
+  try {
+    const { channel, text } = req.body;
+    console.log('channel', channel);
+    console.log('text', text);
+    // Set request options
+    const options = {
+      hostname: `${teamsHostName}`, // make sure it's without the protocol (https://)
+      path: `/${teamsWebhookUrl}`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(sampleData)
+      }
+    };
+
+    // Send request to Microsoft Teams webhook
+    const request = https.request(options, (response) => {
+      console.log(`Status code: ${response.statusCode}`);
+
+      response.on('data', (data) => {
+        console.log('Response:', data.toString());
+      });
+
+      response.on('end', () => {
+        res.send('Sample data sent to Teams channel successfully.');
+      });
+    });
+
+    request.on('error', (error) => {
+      console.error('Error sending data to Teams channel:', error);
+      res.status(500).send('Internal Server Error');
+    });
+
+    request.write(sampleData);
+    request.end();
+  } catch (error) {
+    console.error('Error sending data to Teams channel:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -383,49 +242,36 @@ app.get("/get-user", (req, outRes) => {
   req.end();
 });
 
-// Route to send sample data to Microsoft Teams channel
-app.get('/send-teams-notification', async (req, res) => {
-  try {
-    // Create POST data
-    const postData = JSON.stringify({
-      text: `Sample Data:\nMessage: ${sampleData.message}\nTimestamp: ${sampleData.timestamp}`
+app.get("/get-group", (req, outRes) => {
+  let uid =  req.query.uid;
+  var options = {
+    method: "GET",
+    hostname: "api.split.io",
+    path: `/internal/api/v2/groups/${uid}`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${splitAdminApikey}`,
+    },
+    maxRedirects: 20,
+  };
+
+  var req = https.request(options, function (res) {
+    var data;
+
+    res.on("data", function (response) {
+      data = response;
     });
 
-    // Set request options
-    const options = {
-      hostname: 'hooks.microsoft.com',
-      path: teamsWebhookUrl,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': postData.length
-      }
-    };
-
-    // Send request to Microsoft Teams webhook
-    const req = https.request(options, (response) => {
-      console.log(`Status code: ${response.statusCode}`);
-
-      response.on('data', (data) => {
-        console.log('Response:', data.toString());
-      });
-
-      response.on('end', () => {
-        res.send('Sample data sent to Teams channel successfully.');
-      });
+    res.on("end", function (chunk) {
+      var output = JSON.parse(data.toString())
+       outRes.send(output);
     });
 
-    req.on('error', (error) => {
-      console.error('Error sending data to Teams channel:', error);
-      res.status(500).send('Internal Server Error');
+    res.on("error", function (error) {
+      console.error(error);
     });
-
-    req.write(postData);
-    req.end();
-  } catch (error) {
-    console.error('Error sending data to Teams channel:', error);
-    res.status(500).send('Internal Server Error');
-  }
+  });
+  req.end();
 });
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

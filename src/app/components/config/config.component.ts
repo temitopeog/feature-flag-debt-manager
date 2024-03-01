@@ -42,6 +42,7 @@ export class ConfigComponent implements OnInit {
   }
 
   startEdit(i: number, tag: string, slack: string, teams: string) {
+    this.crudService.changeMessage(tag);
     this.id = i;
     console.log({id: this.id, tag: tag, slack: slack, teams: teams});
     const dialogRef = this.dialog.open(EditDialogComponentComponent, {

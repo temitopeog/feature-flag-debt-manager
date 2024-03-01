@@ -20,6 +20,8 @@ export interface featureFlag {
   rolloutStatus: URN,
   owners: ownersObject[], // Array of owners
   rolloutStatusTimestamp: Date // Milliseconds since epoch
+  creator?: string // Name of the feature flag creator
+  group?: string // Name of the feature flag group
 }
 
 export interface ownersObject {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { SplitService } from './split.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ export class DataService {
   private messageSource = new BehaviorSubject<string>('');
   currentMessage = this.messageSource.asObservable();
 
-  constructor() { }
+  constructor(private splitService: SplitService) { }
 
   changeMessage(message: string) {
     this.messageSource.next(message);
@@ -44,5 +45,23 @@ export class DataService {
       records.splice(index, 1);
       localStorage.setItem(key, JSON.stringify(records));
     }
+  }
+
+  calculateDiff(dateSent: any){
+    // Convert the timestamp to a Date object
+  const timestamp1 = dateSent; // Milliseconds since epoch
+  const date1 = new Date(timestamp1);
+
+  // Get the current date
+  const currentDate = new Date();
+
+  // Calculate the difference in milliseconds between the two dates
+  const differenceInMilliseconds = currentDate.getTime() - date1.getTime();
+
+  // Convert milliseconds to days
+  const millisecondsInADay = 1000 * 60 * 60 * 24; // 1 day = 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+  const differenceInDays = Math.floor(differenceInMilliseconds / millisecondsInADay);
+
+  return differenceInDays;
   }
 }

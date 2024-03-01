@@ -38,8 +38,8 @@
     </ng-container>
 
     <ng-container matColumnDef="rolloutStatusTimestamp">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Flag days </th>
-      <td mat-cell *matCellDef="let element"> {{calculateDiff(element.rolloutStatusTimestamp)}} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Days in status </th>
+      <td mat-cell *matCellDef="let element"> {{dataService.calculateDiff(element.rolloutStatusTimestamp)}} </td>
     </ng-container>
 
     <ng-container matColumnDef="tags">

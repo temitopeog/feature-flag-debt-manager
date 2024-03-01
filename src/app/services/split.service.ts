@@ -24,7 +24,12 @@ export class SplitService {
   }
 
   // Retrieves the feature flag.
-  getUserInfo(id: string): Observable<User> {
+  getUserInfo(id: string) {
     return this.http.get<User>(`${this.apiUrl}/get-user?uid=${id}`);
+  }
+
+  // Retrieves the feature flag.
+  getGroupInfo(id: string) {
+    return this.http.get<User>(`${this.apiUrl}/get-group?uid=${id}`);
   }
 }

@@ -41,7 +41,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   uniqueTags: string[] = [];
   uniqueGroups: string[] = [];
 
-  constructor(private splitService: SplitService, private dataService: DataService) {
+  constructor(private splitService: SplitService, public dataService: DataService) {
     this.workspaces = this.splitService.getWorkspaces().pipe(take(1),map((workspace: splitGeneric) => workspace.objects));
   }
 
@@ -119,24 +119,20 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     await this.calculateOwners();
   }
 
-  calculateDiff(dateSent: any){
-    let currentDate = new Date();
-    dateSent = new Date(dateSent);
-    return Math.floor((Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) - Date.UTC(dateSent.getFullYear(), dateSent.getMonth(), dateSent.getDate()) ) /(1000 * 60 * 60 * 24));
-  }
-
   filterByTags(tagValue: string){
     let filteredObjects: featureFlag[] = this.dataStore.filter((obj: any) => {
       if(obj.tags && obj.tags.length > 0) return obj.tags.some((tag: any) => tag.name === tagValue);
     });
     this.tableUpdater(filteredObjects);
     this.dataService.changeMessage(tagValue);
+    console.log(filteredObjects);
+    localStorage.setItem('selectedTag', JSON.stringify(filteredObjects));
   }
 
   filterByDate(value: any){
     this.mergeAllTags = []; this.mergeAllOwners = [];
     // re-run calculation based on dates selected
-    let filteredResults = this.dataStore.filter((el :any) => this.calculateDiff(el.rolloutStatusTimestamp) > value);
+    let filteredResults = this.dataStore.filter((el :any) => this.dataService.calculateDiff(el.rolloutStatusTimestamp) > value);
     this.dataSource = new MatTableDataSource(filteredResults);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
