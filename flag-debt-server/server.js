@@ -63,48 +63,33 @@ app.post("/send-slack-notification", async (req, res) => {
 });
 
 // Sample data to send to Microsoft Teams channel
-const sampleData = JSON.stringify({
-  "type": "MessageCard",
-  "title": "Split IO Police 👮‍♂️",
-  "summary": "Hello there! This is a reminder to clean up / manage your feature flags \n",
-  "sections": [
-    {
-      "startGroup": true,
-      "images": [
-        {
-          "image": "https://media.giphy.com/media/bAQH7WXKqtIBrPs7sR/giphy.gif?cid=ecf05e47mqcqd2dnhxb3vr4ahr0jrlqh5op7n3gh689znkei&ep=v1_gifs_search&rid=giphy.gif&ct=g",
-          "title": "Giphy"
-        }
-      ]
-    },
-    {
-      "startGroup": true,
-      "title": "\n **Below is the list of flags that requires your immediate attention**",
-      "text": "- Line 1\n  - First bullet point\n- Line 2\n  - Second bullet point"
-    },
-    {
-      "startGroup": true,
-      "activityImage": "https://example.com/image.png",
-      "activityTitle": "Additional Information",
-      "facts": [
-        {
-          "name": "Key 1",
-          "value": "Value 1"
-        },
-        {
-          "name": "Key 2",
-          "value": "Value 2"
-        }
-      ]
-    }
-  ]
-});
+// const sampleData = JSON.stringify({
+//   "type": "MessageCard",
+//   "title": "Split IO Police 👮‍♂️",
+//   "summary": "Hello there! This is a reminder to clean up / manage your feature flags \n",
+//   "sections": [
+//     {
+//       "startGroup": true,
+//       "images": [
+//         {
+//           "image": "https://media.giphy.com/media/bAQH7WXKqtIBrPs7sR/giphy.gif?cid=ecf05e47mqcqd2dnhxb3vr4ahr0jrlqh5op7n3gh689znkei&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+//           "title": "Giphy"
+//         }
+//       ]
+//     },
+//     {
+//       "startGroup": true,
+//       "title": "\n **Below is the list of flags that requires your immediate attention**",
+//       "text": "- Feature flag - Affordability_score 1\n  - Status is: 100% Released \n- Line 2\n  - In status for: 1709131837120 \n- Line 3\n  - User : temitope.ogunrekun+demoorg-20220607-mbjql"
+//     }
+//   ]
+// });
 // Route to send sample data to Microsoft Teams channel
 app.post('/send-teams-notification', async (req, res) => {
   try {
-    const { channel, text } = req.body;
-    console.log('channel', channel);
-    console.log('text', text);
+    const { data, channel } = req.body;
+    // console.log('channel', channel);
+    console.log('text', data);
     // Set request options
     const options = {
       hostname: `${teamsHostName}`, // make sure it's without the protocol (https://)
@@ -112,7 +97,7 @@ app.post('/send-teams-notification', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(sampleData)
+        'Content-Length': Buffer.byteLength(JSON.stringify(data))
       }
     };
 

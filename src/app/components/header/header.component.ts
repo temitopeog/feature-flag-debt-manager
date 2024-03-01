@@ -61,9 +61,9 @@ export class HeaderComponent implements OnInit  {
     if(data && data[0] && data[0].slack && data[0].slack.length > 0 && persistedTag){
       console.log('SLACK WORKS SLACK WORKS SLACK WORKS', persistedTag)
       await this.sendToSlack(persistedTag, data[0].slack);
-    } else if(data && data[0] && data[0].teams && data[0].teams.length > 0){
+    } else if(data && data[0] && data[0].teams && data[0].teams.length > 0 && persistedTag){
       console.log('TEAMS WORKS')
-      await this.sendToTeams(data);
+      await this.sendToTeams(persistedTag, data[0].teams);
     } else {
       alert(`You need to configure ${data[0].tag} tag first!!!`)
       // Navigate to the config route
@@ -83,8 +83,8 @@ export class HeaderComponent implements OnInit  {
       }
     );
   }
-  sendToTeams(data: any){
-    this.teamsService.sendMessage(data[0].teams, this.message).subscribe(
+  sendToTeams(data: any, channel: string){
+    this.teamsService.sendMessage(data, channel).subscribe(
       (response) => {
         console.log('Message sent:', response);
         alert('Message sent to slack channel');
