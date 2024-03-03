@@ -3,7 +3,6 @@ import { DataService } from 'src/app/services/data.service';
 import { SlackService } from 'src/app/services/slack.service';
 import { TeamsService } from 'src/app/services/teams.service';
 import { Router } from '@angular/router';
-import { featureFlag } from 'src/app/models/splitAPI.model';
 import { SplitService } from 'src/app/services/split.service';
 import { take } from 'rxjs';
 
@@ -19,11 +18,13 @@ export class HeaderComponent implements OnInit  {
     private slackService: SlackService, private router: Router, private teamsService: TeamsService) { }
 
   ngOnInit() {
+    // get observable data based on selected tags
     this.dataService.currentMessage.subscribe(message => this.message = message);
   }
 
+  // Send flags data to the slack / teams channel that needs to be cleaned up
   async sendInfo(){
-    // Sample array of objects
+    // Get data from local storage & filter based on selected tags
     let data = this.dataService.getAllRecords('records').filter(record => record.tag === this.message);
     let selectedTag = localStorage.getItem('selectedTag');
     let parsedSelectedTag = selectedTag ? JSON.parse(selectedTag) : [];
@@ -59,17 +60,14 @@ export class HeaderComponent implements OnInit  {
     // Loop through the array of objects
     let persistedTag = await this.addPropertyToObjects(newSelectedTag);
     if(data && data[0] && data[0].slack && data[0].slack.length > 0 && persistedTag){
-      console.log('SLACK WORKS SLACK WORKS SLACK WORKS', persistedTag)
       await this.sendToSlack(persistedTag, data[0].slack);
     } else if(data && data[0] && data[0].teams && data[0].teams.length > 0 && persistedTag){
-      console.log('TEAMS WORKS')
       await this.sendToTeams(persistedTag, data[0].teams);
     } else {
       alert(`You need to configure ${data[0].tag} tag first!!!`)
       // Navigate to the config route
       this.router.navigate(['/config']);
     }
-    // return arrayOfObjects;
   }
 
   sendToSlack(data: any, channel: string){
@@ -79,7 +77,6 @@ export class HeaderComponent implements OnInit  {
       },
       error => {
         console.error('Error sending message:', error);
-        // Handle error
       }
     );
   }
@@ -88,7 +85,6 @@ export class HeaderComponent implements OnInit  {
       (response) => {
         console.log('Message sent:', response);
         alert('Message sent to slack channel');
-        // Reset input fields or handle success message
       },
       error => {
         console.error('Error sending message:', error);

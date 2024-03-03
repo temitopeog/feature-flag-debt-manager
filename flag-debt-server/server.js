@@ -20,6 +20,7 @@ app.use(cors({
   origin: "http://localhost:4200" // allow CORS for 4200
 })); // Add this line to enable CORS
 
+// API endpoint to send flags slack notifications to a configured channel
 app.post("/send-slack-notification", async (req, res) => {
   try {
     const { data, channel } = req.body;
@@ -62,7 +63,7 @@ app.post("/send-slack-notification", async (req, res) => {
   }
 });
 
-// Route to send sample data to Microsoft Teams channel
+// API endpoint to send flags notification to Microsoft Teams channel
 app.post('/send-teams-notification', async (req, res) => {
   try {
     const { data, channel } = req.body;
@@ -103,6 +104,7 @@ app.post('/send-teams-notification', async (req, res) => {
   }
 });
 
+// API endpoint to get all the Split workspaces
 app.get("/workspaces", (req, outRes) => {
   var options = {
     method: "GET",
@@ -135,7 +137,7 @@ app.get("/workspaces", (req, outRes) => {
   req.end();
 });
 
-
+// API endpoint to get a list of Split feature flags per workspace
 app.get("/list-feature-flags", (req, outRes) => {
   let workspaceId =  req.query.workspaceId;
   let offset = req.query.offset;
@@ -171,6 +173,7 @@ app.get("/list-feature-flags", (req, outRes) => {
   req.end();
 });
 
+// API endpoint to get user information per flags created
 app.get("/get-user", (req, outRes) => {
   let uid =  req.query.uid;
   var options = {
@@ -203,6 +206,7 @@ app.get("/get-user", (req, outRes) => {
   req.end();
 });
 
+// API endpoint to get group information per flags created
 app.get("/get-group", (req, outRes) => {
   let uid =  req.query.uid;
   var options = {

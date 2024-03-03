@@ -35,20 +35,20 @@ export class ConfigComponent implements OnInit {
     this.loadData();
   }
 
+  // Get data from local storage based on created tags
   loadData(): void {
     this.records = this.crudService.getAllRecords('records');
-    console.log(this.records);
     this.dataSource = new MatTableDataSource(this.records);
   }
 
   startEdit(i: number, tag: string, slack: string, teams: string) {
     this.crudService.changeMessage(tag);
     this.id = i;
-    console.log({id: this.id, tag: tag, slack: slack, teams: teams});
+    // start dilog for the user to enter either Split / Teams channel
     const dialogRef = this.dialog.open(EditDialogComponentComponent, {
       data: {id: this.id, tag: tag, slack: slack, teams: teams}
     });
-
+    // Close dilog after the user enter the data
     dialogRef.afterClosed().subscribe((res: any) => {
       if (res) {
         this.records[i] = res;

@@ -96,6 +96,7 @@ First, create a webhook in your Microsoft Teams channel by following these steps
 3. Click on "Add" to add the webhook to your channel.
 4. Customize the name and profile picture of the webhook, and click "Create".
 5. Copy the webhook URL provided.
+6. **VERY IMPORTANT** - Remove protocol from the hostname: When specifying the hostname in your request options, remove the protocol (https://) and only include the hostname (hooks.microsoft.com). The https module automatically uses HTTPS protocol.
 
 
 ## Contact

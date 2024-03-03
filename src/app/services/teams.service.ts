@@ -12,11 +12,13 @@ export class TeamsService {
   private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient, private dataService: DataService) {}
 
+  // Service that connects with the backend API to send data to teams channel.
   sendMessage(text: featureFlag[], channel: string): Observable<any> {
     let data = this.splitToTeamsConverter(text);
     return this.http.post<any>(`${this.apiUrl}/send-teams-notification`, { data, channel });
   }
-//
+
+  // Resource to convert Split payload to the expected format by Teams Channel
   splitToTeamsConverter(jsonData: featureFlag[]){
     const transformedData = {
       type: "MessageCard",

@@ -30,6 +30,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   @ViewChild(MatSort, { static: true })
   sort: MatSort = new MatSort;
 
+  // Configurable properties for filtering flags active days
   daysActive = [
   {key: " > 7 days", value: 7},
   {key: " > 15 days", value: 15},

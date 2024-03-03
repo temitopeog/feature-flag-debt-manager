@@ -16,7 +16,6 @@ export class DataService {
   }
 
   // using localStorage. Feel free to replace with your JSON data storage
-  // Create
   createRecord(key: string, data: any, ) {
     const records = this.getAllRecords(key);
     records.push(data);
@@ -47,6 +46,7 @@ export class DataService {
     }
   }
 
+  // Convert EPOCH timestamp to local days/time format
   calculateDiff(dateSent: any){
     // Convert the timestamp to a Date object
   const timestamp1 = dateSent; // Milliseconds since epoch

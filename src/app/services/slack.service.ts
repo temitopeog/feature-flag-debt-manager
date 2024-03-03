@@ -12,11 +12,13 @@ export class SlackService {
   private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient, public dataService: DataService) {}
 
+  // Service that connects with the backend API to send data to Slack channel.
   sendMessage(text: any[], channel: string): Observable<any> {
     let data = this.splitToSlackConverter(text);
     return this.http.post<any>(`${this.apiUrl}/send-slack-notification`, { data, channel });
   }
 
+  // Resource to convert Split payload to the expected format by Slack Channel
   splitToSlackConverter(jsonData: featureFlag[]){
     let transformedData: any = [
       {
