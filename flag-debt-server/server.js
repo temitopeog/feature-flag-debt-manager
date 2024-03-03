@@ -88,8 +88,6 @@ app.post("/send-slack-notification", async (req, res) => {
 app.post('/send-teams-notification', async (req, res) => {
   try {
     const { data, channel } = req.body;
-    // console.log('channel', channel);
-    console.log('text', data);
     // Set request options
     const options = {
       hostname: `${teamsHostName}`, // make sure it's without the protocol (https://)
@@ -119,7 +117,7 @@ app.post('/send-teams-notification', async (req, res) => {
       res.status(500).send('Internal Server Error');
     });
 
-    request.write(sampleData);
+    request.write(JSON.stringify(data));
     request.end();
   } catch (error) {
     console.error('Error sending data to Teams channel:', error);

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { featureFlag } from '../models/splitAPI.model';
 import { DataService } from './data.service';
@@ -24,8 +24,8 @@ export class TeamsService {
       summary: "Hello there! This is a reminder to clean up / manage your feature flags \n",
       sections: jsonData.map((item, i) => ({
           startGroup: true,
-          title: "\n **Below is the list of flags that requires your immediate attention**",
-          text: `- Flag ${i} - ${item.name} \n - Status is: ${item.rolloutStatus.name} \n - In status for: ${this.dataService.calculateDiff(item.rolloutStatusTimestamp) + ' days'} \n - User : ${item.creator}`
+          title: "\n **Flag that requires your immediate attention**",
+          text: `- Flag ${i + 1} - ${item.name} \n - Status is: ${item.rolloutStatus.name} \n - In status for: ${this.dataService.calculateDiff(item.rolloutStatusTimestamp) + ' days'} \n - User : ${item.creator}`
       }))
    };
    return transformedData;
