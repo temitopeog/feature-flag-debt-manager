@@ -18,15 +18,17 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   dataStore: any;
   workspaces: Observable<URN[]>;
   environments: Observable<URN[]> | undefined;
-  flags: Observable<featureFlag[]> | undefined;
   flagsSubscription: Subscription | undefined
   length:number | undefined;
   mergeAllTags: TagsObject[] = [];
   mergeAllOwners: ownersObject[] = [];
+  tagSelected: boolean = false;
 
   @ViewChild(MatPaginator, { static: true })
   paginator!: MatTableDataSourcePaginator;
+
   @ViewChild(MatTable) table!: MatTable<any>;
+
   @ViewChild(MatSort, { static: true })
   sort: MatSort = new MatSort;
 
@@ -38,26 +40,33 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   {key: " > 60 days", value: 60},
   {key: " > 90 days", value: 90},
   {key: " > 100 days", value: 100}];
-  displayedColumns: string[] = ['name', 'rolloutStatus', 'rolloutStatusTimestamp', 'tags', 'owners'];
+  displayedColumns: string[] = ['name', 'rolloutStatus', 'rolloutStatusTimestamp', 'tags'];
   uniqueTags: string[] = [];
   uniqueGroups: string[] = [];
 
   constructor(private splitService: SplitService, public dataService: DataService) {
     this.workspaces = this.splitService.getWorkspaces().pipe(take(1),map((workspace: splitGeneric) => workspace.objects));
+    this.dataStore = this.dataService.getAllRecords('workspaces');
+    this.uniqueTags = this.dataService.getAllRecords('uniqueTags');
   }
 
   ngAfterViewInit() {
+    this.dataSource = new MatTableDataSource(this.dataStore);
+    this.table?.renderRows();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.length = this.dataSource.data.length;
   }
   ngOnDestroy(): void {
     this.flagsSubscription?.unsubscribe();
   }
 
+
   async selectWorkspace(wsid: string){
     let offset = 0;
-    const limit = 20; // Batch size
+    let limit = 50; // Batch size
     let featureFlags: featureFlag[] = []; // To store concatenated results
+    let filteredFeatureFlags: featureFlag[] = []; // To store concatenated results
     this.wsId = wsid;
     this.mergeAllTags = []; this.mergeAllOwners = [];
 
@@ -67,14 +76,16 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
         map((flagDef: splitGeneric) =>
           flagDef)).subscribe((flags: splitGeneric) => {
             if(flags && flags.objects) {
+              flags.objects.map((res: any) => featureFlags.push(res));
+              // conditions to show flags
               let filteredFlags  = flags.objects.filter((el: featureFlag) =>
               el.rolloutStatus.name === "Ramping" || el.rolloutStatus.name === "100% Released" ||
-              el.rolloutStatus.name === "Removed from Code" || el.rolloutStatus.name === "Killed");
-              featureFlags.push(...filteredFlags);
+              el.rolloutStatus.name === "Killed");
+              filteredFeatureFlags.push(...filteredFlags);
             }
-            this.dataSource = new MatTableDataSource(featureFlags);
+            this.dataSource = new MatTableDataSource(filteredFeatureFlags);
             this.table.renderRows(); // Ramping, 100% Released, Removed from Code, Killed
-            featureFlags.map((flag: featureFlag) => {
+            filteredFeatureFlags.map((flag: featureFlag) => {
               if(flag.tags && flag.tags.length > 0) {
                 this.mergeAllTags.push(...flag.tags);
               }
@@ -90,8 +101,8 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
               offset += limit;
               fetchBatchData();
             } else {
-              this.dataStore = featureFlags;
-              localStorage.setItem('workspaces', JSON.stringify(featureFlags));
+              this.dataStore = filteredFeatureFlags;
+              localStorage.setItem('workspaces', JSON.stringify(filteredFeatureFlags));
               this.calculateTags();
               this.calculateOwners();
             }
@@ -121,12 +132,12 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   }
 
   filterByTags(tagValue: string){
+    this.tagSelected = true;
     let filteredObjects: featureFlag[] = this.dataStore.filter((obj: any) => {
       if(obj.tags && obj.tags.length > 0) return obj.tags.some((tag: any) => tag.name === tagValue);
     });
     this.tableUpdater(filteredObjects);
     this.dataService.changeMessage(tagValue);
-    console.log(filteredObjects);
     localStorage.setItem('selectedTag', JSON.stringify(filteredObjects));
   }
 
@@ -153,29 +164,34 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   }
 
   async calculateTags(){
-    this.uniqueTags = [];
-    this.mergeAllTags.map((tag: TagsObject) => tag.name)
-    .filter((value, index, current_value) => {
-      if(current_value.indexOf(value) === index) {
-        this.uniqueTags.push(value);
-      }
-    });
-   await this.persistTagsInLocalStorage('records');
-  }
-  calculateOwners(){
-    this.uniqueGroups = [];
-    this.mergeAllOwners.map((owner: ownersObject) => owner.type)
+    if(this.tagSelected === false){
+      this.uniqueTags = [];
+      this.mergeAllTags.map((tag: TagsObject) => tag.name)
       .filter((value, index, current_value) => {
         if(current_value.indexOf(value) === index) {
-          this.uniqueGroups.push(value);
+          this.uniqueTags.push(value);
         }
       });
+     await this.persistTagsInLocalStorage('records');
+    }
+  }
+  calculateOwners(){
+    if(this.tagSelected === false){
+      this.uniqueGroups = [];
+      this.mergeAllOwners.map((owner: ownersObject) => owner.type)
+        .filter((value, index, current_value) => {
+          if(current_value.indexOf(value) === index) {
+            this.uniqueGroups.push(value);
+          }
+        });
+    }
   }
 
-  // create JSON object for local storage
+  // create unique tags / groups JSON object to store in local storage
   persistTagsInLocalStorage(key: string){
       if(!this.dataService.getAllRecords(key) || this.dataService.getAllRecords(key).length < 1) {
-        this.uniqueTags.map((obj: any) => this.dataService.createRecord('records', {tag: obj, slack: '', teams: ''}))
+        this.uniqueTags.map((obj: any) => this.dataService.createRecord('records', {tag: obj, slack: '', teams: ''}));
+        localStorage.setItem('uniqueTags', JSON.stringify(this.uniqueTags));
       }
   }
 }

@@ -144,7 +144,7 @@ app.get("/list-feature-flags", (req, outRes) => {
   var options = {
     method: "GET",
     hostname: "api.split.io",
-    path: `/internal/api/v2/splits/ws/${workspaceId}?limit=20&offset=${offset}`,
+    path: `/internal/api/v2/splits/ws/${workspaceId}?limit=50&offset=${offset}`,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${splitAdminApikey}`,
@@ -238,5 +238,169 @@ app.get("/get-group", (req, outRes) => {
   });
   req.end();
 });
+
+// API endpoint to delete feature flag information
+app.delete("/delete-flag", (req, outRes) => {
+  let wid =  req.query.wid;
+  let split_name = req.query.split_name;
+  var options = {
+    method: "DELETE",
+    hostname: "api.split.io",
+    path: `/internal/api/v2/splits/ws/${wid}/${split_name}`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${splitAdminApikey}`,
+    },
+    maxRedirects: 20,
+  };
+
+  var req = https.request(options, function (res) {
+    var data;
+
+    res.on("data", function (response) {
+      data = response;
+    });
+
+    res.on("end", function (chunk) {
+      var output = JSON.parse(data.toString())
+       outRes.send(output);
+    });
+
+    res.on("error", function (error) {
+      console.error(error);
+    });
+  });
+  req.end();
+});
+
+app.get("/envs", (req, outRes) => {
+  let workspace =  req.query.workspace;
+  console.log("workspace", workspace);
+  var options = {
+      method: "GET",
+      hostname: "api.split.io",
+      path: `/internal/api/v2/environments/ws/${workspace}`,
+      headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${splitAdminApikey}`,
+      },
+      maxRedirects: 20,
+  };
+  var req = https.request(options, function (res) {
+      var chunks = [];
+
+      res.on("data", function (chunk) {
+      chunks.push(chunk);
+      });
+
+      res.on("end", function (chunk) {
+      var body = Buffer.concat(chunks);
+      var response = JSON.parse(body.toString());
+
+      outRes.send(response.map((env) => { return {'id': env.id, 'name': env.name}}));
+      });
+
+      res.on("error", function (error) {
+      console.error(error);
+      });
+    });
+    req.end();
+  });
+
+app.get("/splitDefs", (req, outRes) => {
+  let workspace =  req.query.workspace;
+  let offset =  req.query.offset;
+  let env =  req.query.environment;
+  var options = {
+    method: "GET",
+    hostname: "api.split.io",
+    path: `/internal/api/v2/splits/ws/${workspace}/environments/${env}?offset=${offset}&limit=30`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${splitAdminApikey}`,
+    },
+    maxRedirects: 20,
+  };
+
+  var req = https.request(options, function (res) {
+    var chunks = [];
+
+    res.on("data", function (chunk) {
+      chunks.push(chunk);
+    });
+
+    res.on("end", function (chunk) {
+      var body = Buffer.concat(chunks);
+      var output = JSON.parse(body.toString())
+      var result = {};
+      result.offset = output.offset;
+      result.limit = output.limit;
+      result.totalCount = output.totalCount
+      result.flags = output.objects.map((split) => { return {'name': split.name,  'lastUpdateTime': calculateDiff(split.lastUpdateTime), 'lastTrafficReceivedAt': calculateDiff(split.lastTrafficReceivedAt), creator: "", group: "", tag: "", status: ""}});
+      outRes.send(result);
+    });
+
+    res.on("error", function (error) {
+      console.error(error);
+    });
+  });
+  req.end();
+});
+
+app.get("/splitPerDef", (req, outRes) => {
+  let workspace =  req.query.workspace;
+  let split =  req.query.split;
+  let offset =  req.query.offset;
+  let env =  req.query.environment;
+  var options = {
+    method: "GET",
+    hostname: "api.split.io",
+    path: `/internal/api/v2/splits/ws/${workspace}/${split}/environments/${env}`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${splitAdminApikey}`,
+    },
+    maxRedirects: 20,
+  };
+
+  var req = https.request(options, function (res) {
+    var chunks = [];
+
+    res.on("data", function (chunk) {
+      chunks.push(chunk);
+    });
+
+    res.on("end", function (chunk) {
+      var body = Buffer.concat(chunks);
+      var output = JSON.parse(body.toString())
+      var result = {};
+      result.offset = output.offset;
+      result.limit = output.limit;
+      result.totalCount = output.totalCount
+      result.flags = output.objects.map((split) => { return {'name': split.name,  'lastUpdateTime': calculateDiff(split.lastUpdateTime), 'lastTrafficReceivedAt': calculateDiff(split.lastTrafficReceivedAt), creator: "", group: "", tag: "", status: ""}});
+      outRes.send(result);
+    });
+
+    res.on("error", function (error) {
+      console.error(error);
+    });
+  });
+  req.end();
+});
+
+  // Convert EPOCH timestamp to local days/time format
+ function calculateDiff(dateSent){
+    // Convert the timestamp to a Date object
+  const timestamp1 = dateSent; // Milliseconds since epoch
+  const date1 = new Date(timestamp1);
+  // Get the current date
+  const currentDate = new Date();
+  // Calculate the difference in milliseconds between the two dates
+  const differenceInMilliseconds = currentDate.getTime() - date1.getTime();
+  // Convert milliseconds to days
+  const millisecondsInADay = 1000 * 60 * 60 * 24; // 1 day = 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+  const differenceInDays = Math.floor(differenceInMilliseconds / millisecondsInADay);
+  return differenceInDays;
+  }
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

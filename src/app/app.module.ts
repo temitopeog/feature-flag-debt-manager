@@ -20,12 +20,14 @@ import { HomeComponent } from './components/home/home.component';
 import { ConfigModule } from './components/config/config.module';
 import { HeaderComponent } from './components/header/header.component';
 import { MatPaginatorModule} from '@angular/material/paginator';
+import { FlagsComponent } from './components/flags/flags.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    HeaderComponent
+    HeaderComponent,
+    FlagsComponent
   ],
   imports: [
     BrowserModule,

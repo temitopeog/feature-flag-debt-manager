@@ -42,7 +42,7 @@ export class ConfigComponent implements OnInit {
   }
 
   startEdit(i: number, tag: string, slack: string, teams: string) {
-    this.crudService.changeMessage(tag);
+    // this.crudService.changeMessage(tag);
     this.id = i;
     // start dilog for the user to enter either Split / Teams channel
     const dialogRef = this.dialog.open(EditDialogComponentComponent, {

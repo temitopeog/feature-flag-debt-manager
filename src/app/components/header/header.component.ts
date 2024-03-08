@@ -74,6 +74,7 @@ export class HeaderComponent implements OnInit  {
     this.slackService.sendMessage(data, channel).subscribe(
       (response) => {
         console.log('Message sent:', response);
+        alert('Flags sent to slack channel');
       },
       error => {
         console.error('Error sending message:', error);
@@ -84,7 +85,7 @@ export class HeaderComponent implements OnInit  {
     this.teamsService.sendMessage(data, channel).subscribe(
       (response) => {
         console.log('Message sent:', response);
-        alert('Message sent to slack channel');
+        alert('Message sent to teams channel');
       },
       error => {
         console.error('Error sending message:', error);

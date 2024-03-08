@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { User, splitGeneric } from '../models/splitAPI.model';
+import { URN, User, splitGeneric } from '../models/splitAPI.model';
 
 
 @Injectable({
@@ -17,6 +17,17 @@ export class SplitService {
   // Connect to the server & get all workspaces information
   getWorkspaces(): Observable<splitGeneric> {
     return this.http.get<splitGeneric>(`${this.apiUrl}/workspaces`);
+  }
+
+  // Connect to the server & get all environments information
+  getEnv(workspace: string): Observable<URN[]> {
+    console.log('getEnv', workspace);
+    return this.http.get<URN[]>(`${this.apiUrl}/envs?workspace=${workspace}`);
+  }
+
+  // Connect to the server & get all environments information
+  getSplitDef(workspace: string, environment: string, offset: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/splitDefs?workspace=${workspace}&offset=${offset}&environment=${environment}`);
   }
 
   // Connect to the server & lists feature flags.
