@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { SplitService } from './split.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +8,16 @@ export class DataService {
   private messageSource = new BehaviorSubject<string>('');
   currentMessage = this.messageSource.asObservable();
 
-  constructor(private splitService: SplitService) { }
+  private widSource = new BehaviorSubject<string>('');
+  currentWid = this.widSource.asObservable();
 
   changeMessage(message: string) {
     this.messageSource.next(message);
+  }
+
+  changeWid(wid: string) {
+    this.widSource.next(wid);
+    localStorage.setItem("wid", JSON.stringify(wid));
   }
 
   // using localStorage. Feel free to replace with your JSON data storage

@@ -13,9 +13,12 @@ import { take } from 'rxjs';
 })
 export class HeaderComponent implements OnInit  {
   message: string = '';
+  wid: any = '';
 
   constructor(private dataService: DataService, private splitService: SplitService,
-    private slackService: SlackService, private router: Router, private teamsService: TeamsService) { }
+    private slackService: SlackService, private router: Router, private teamsService: TeamsService) {
+      this.dataService.currentWid.subscribe(wid => this.wid = wid);
+     }
 
   ngOnInit() {
     // get observable data based on selected tags
@@ -24,7 +27,9 @@ export class HeaderComponent implements OnInit  {
 
   // Send flags data to the slack / teams channel that needs to be cleaned up
   async sendInfo(){
+    let wid = localStorage.getItem('wid');
     // Get data from local storage & filter based on selected tags
+    (this.wid) === "" ? this.wid = wid : this.wid;
     let data = this.dataService.getAllRecords('records').filter(record => record.tag === this.message);
     let selectedTag = localStorage.getItem('selectedTag');
     let parsedSelectedTag = selectedTag ? JSON.parse(selectedTag) : [];
@@ -82,7 +87,7 @@ export class HeaderComponent implements OnInit  {
     );
   }
   sendToTeams(data: any, channel: string){
-    this.teamsService.sendMessage(data, channel).subscribe(
+    this.teamsService.sendMessage(data, channel, this.wid).subscribe(
       (response) => {
         console.log('Message sent:', response);
         alert('Message sent to teams channel');

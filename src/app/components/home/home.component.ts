@@ -63,12 +63,13 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
 
 
   async selectWorkspace(wsid: string){
+    this.mergeAllTags = []; this.mergeAllOwners = []; this.uniqueTags = [];
     let offset = 0;
     let limit = 50; // Batch size
     let featureFlags: featureFlag[] = []; // To store concatenated results
     let filteredFeatureFlags: featureFlag[] = []; // To store concatenated results
     this.wsId = wsid;
-    this.mergeAllTags = []; this.mergeAllOwners = [];
+    this.dataService.changeWid(wsid);
 
     const fetchBatchData = () =>{
       this.flagsSubscription = this.splitService.listFFs(this.wsId, offset).pipe(

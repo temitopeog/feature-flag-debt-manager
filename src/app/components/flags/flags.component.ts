@@ -70,6 +70,6 @@ export class FlagsComponent {
   }
 
   enrich(){
-
+    this.splitService.getSplitDef
   }
 }

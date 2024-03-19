@@ -240,9 +240,10 @@ app.get("/get-group", (req, outRes) => {
 });
 
 // API endpoint to delete feature flag information
-app.delete("/delete-flag", (req, outRes) => {
-  let wid =  req.query.wid;
-  let split_name = req.query.split_name;
+app.post("/delete-flag", (req, outRes) => {
+  const { split_name, wid } = req.body;
+  console.log("split_name", split_name);
+  console.log("wid", wid)
   var options = {
     method: "DELETE",
     hostname: "api.split.io",
