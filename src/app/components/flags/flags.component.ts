@@ -20,7 +20,8 @@ export class FlagsComponent {
   dataSource = new MatTableDataSource<any>();
   dataStore: any;
   length:number | undefined;
-  flagsSubscription: Subscription | undefined
+  flagsSubscription: Subscription | undefined;
+  flagSubscription: Subscription | undefined
   displayedColumns: string[] = ['name', 'lastUpdateTime', 'status', 'creator'];
   @ViewChild(MatTable) table!: MatTable<any>;
   @ViewChild(MatPaginator, { static: true })
@@ -70,6 +71,16 @@ export class FlagsComponent {
   }
 
   enrich(){
-    this.splitService.getSplitDef
+    console.log(this.dataStore);
+    this.dataStore.forEach((flag: any, index: number) => {
+      // console.log(flag.name);
+      this.splitService.updateFlag(this.wid, flag.name).pipe(
+        take(1), map((res: any) => {
+          this.dataStore[index].status = res.status;
+          // console.log(index, res);
+        })
+      )
+    });
+    console.log(this.dataStore);
   }
 }

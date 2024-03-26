@@ -67,6 +67,7 @@ app.post("/send-slack-notification", async (req, res) => {
 app.post('/send-teams-notification', async (req, res) => {
   try {
     const { data, channel } = req.body;
+    console.log(JSON.stringify(data, undefined, 2));
     // Set request options
     const options = {
       hostname: `${teamsHostName}`, // make sure it's without the protocol (https://)
@@ -348,15 +349,17 @@ app.get("/splitDefs", (req, outRes) => {
   req.end();
 });
 
-app.get("/splitPerDef", (req, outRes) => {
+app.get("/updateFlag", (req, outRes) => {
   let workspace =  req.query.workspace;
   let split =  req.query.split;
-  let offset =  req.query.offset;
-  let env =  req.query.environment;
+
+  console.log('workspaceid', workspace);
+  console.log('split', split);
+
   var options = {
     method: "GET",
     hostname: "api.split.io",
-    path: `/internal/api/v2/splits/ws/${workspace}/${split}/environments/${env}`,
+    path: `/internal/api/v2/splits/ws/${workspace}/${split}`,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${splitAdminApikey}`,
@@ -365,20 +368,19 @@ app.get("/splitPerDef", (req, outRes) => {
   };
 
   var req = https.request(options, function (res) {
-    var chunks = [];
+    var data;
 
-    res.on("data", function (chunk) {
-      chunks.push(chunk);
+    res.on("data", function (response) {
+      data = response;
     });
 
     res.on("end", function (chunk) {
-      var body = Buffer.concat(chunks);
-      var output = JSON.parse(body.toString())
+      var output = JSON.parse(data.toString())
       var result = {};
-      result.offset = output.offset;
-      result.limit = output.limit;
-      result.totalCount = output.totalCount
-      result.flags = output.objects.map((split) => { return {'name': split.name,  'lastUpdateTime': calculateDiff(split.lastUpdateTime), 'lastTrafficReceivedAt': calculateDiff(split.lastTrafficReceivedAt), creator: "", group: "", tag: "", status: ""}});
+      result.status = output.rolloutStatus.name;
+      result.owners = output.owners;
+      console.log('result', result);
+      console.log('output', output);
       outRes.send(result);
     });
 

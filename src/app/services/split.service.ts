@@ -30,6 +30,13 @@ export class SplitService {
     return this.http.get<any>(`${this.apiUrl}/splitDefs?workspace=${workspace}&offset=${offset}&environment=${environment}`);
   }
 
+  // Connect to the server & update each feature flag information
+  updateFlag(workspace: string, split: string): Observable<any> {
+    console.log('workspace', workspace);
+    console.log('split', split);
+    return this.http.get<any>(`${this.apiUrl}/updateFlag?workspace=${workspace}&split=${split}`);
+  }
+
   // Connect to the server & lists feature flags.
   listFFs(workspaceId: string, offset: number): Observable<splitGeneric> {
     return this.http.get<splitGeneric>(`${this.apiUrl}/list-feature-flags?workspaceId=${workspaceId}&offset=${offset}`);

@@ -98,4 +98,8 @@ export class HeaderComponent implements OnInit  {
       }
     );
   }
+  clear(){
+    localStorage.clear();
+    window.location.reload();
+  }
 }

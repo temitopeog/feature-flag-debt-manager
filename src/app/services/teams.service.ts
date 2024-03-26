@@ -15,6 +15,7 @@ export class TeamsService {
   // Service that connects with the backend API to send data to teams channel.
   sendMessage(text: featureFlag[], channel: string, wid: string): Observable<any> {
     let data = this.splitToTeamsConverter(text, wid);
+    console.log(data);
     return this.http.post<any>(`${this.apiUrl}/send-teams-notification`, { data, channel });
   }
 

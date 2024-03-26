@@ -3,8 +3,13 @@
     <span class="pointer" routerLinkActive="active" [routerLink]="['/home']">Flags Police 👮‍♂️</span>
     <span class="example-spacer"></span>
       <button *ngIf="message" (click)="sendInfo()" mat-stroked-button style="border-color: white;" color="white">Send flags to {{message}} channel</button>
+      <button routerLinkActive="active" [routerLink]="['/flags']" mat-icon-button matTooltip="warn" color="warn" aria-label="Example icon-button with a heart icon">
+        <mat-icon>flag</mat-icon>
+      </button>
       <button routerLinkActive="active" [routerLink]="['/config']" mat-icon-button matTooltip="accent" color="accent" aria-label="Example icon-button with a heart icon">
         <mat-icon>settings</mat-icon>
       </button>
+      <button (click)="clear()" mat-stroked-button style="border-color: white;" color="white">Clear cache
+        <mat-icon>delete</mat-icon></button>
   </mat-toolbar>
 </p>
