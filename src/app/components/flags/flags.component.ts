@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource, MatTableDataSourcePaginator } from '@angular/material/table';
@@ -12,7 +12,7 @@ import { SplitService } from 'src/app/services/split.service';
   templateUrl: './flags.component.html',
   styleUrls: ['./flags.component.scss']
 })
-export class FlagsComponent {
+export class FlagsComponent implements OnDestroy {
   workspaces: Observable<URN[]> | undefined;
   environments: Observable<URN[]> | undefined;
   wid: string = "";
@@ -70,16 +70,21 @@ export class FlagsComponent {
     fetchBatchData();
   }
 
+  ngOnDestroy(): void {
+      this.flagSubscription?.unsubscribe();
+      this.flagsSubscription?.unsubscribe();
+  }
+
   enrich(){
     console.log(this.dataStore);
     this.dataStore.forEach((flag: any, index: number) => {
-      // console.log(flag.name);
+      // flag_tester
       this.splitService.updateFlag(this.wid, flag.name).pipe(
-        take(1), map((res: any) => {
-          this.dataStore[index].status = res.status;
-          // console.log(index, res);
+        take(1), map((res: any) => res)).subscribe((response: any) => {
+          console.log('response', response);
+          this.dataStore[index].status = response.status;
+          // console.log(index, response);
         })
-      )
     });
     console.log(this.dataStore);
   }

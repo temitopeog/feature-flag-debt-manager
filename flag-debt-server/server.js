@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const https = require("https");
 const envVars = require("dotenv").config().parsed;
+const nodeRequest = require('request'); // or use fetch module
 
 const splitAdminApikey = process.env.splitAdminApikey;
 const slackToken=envVars.slackAccessToken
@@ -352,10 +353,6 @@ app.get("/splitDefs", (req, outRes) => {
 app.get("/updateFlag", (req, outRes) => {
   let workspace =  req.query.workspace;
   let split =  req.query.split;
-
-  console.log('workspaceid', workspace);
-  console.log('split', split);
-
   var options = {
     method: "GET",
     hostname: "api.split.io",
@@ -374,16 +371,30 @@ app.get("/updateFlag", (req, outRes) => {
       data = response;
     });
 
-    res.on("end", function (chunk) {
+    res.on("end", async function (chunk) {
       var output = JSON.parse(data.toString())
       var result = {};
-      result.status = output.rolloutStatus.name;
-      result.owners = output.owners;
-      console.log('result', result);
-      console.log('output', output);
-      outRes.send(result);
+      result.status = output?.rolloutStatus?.name;
+      // if(output.owners && output.owners.length > 0){
+        output.owners.forEach(async function (user, index) {
+          if(user.type = "user"){
+              // Call the second API endpoint with parameters
+              await nodeRequest(`http://localhost:3000/get-user?uid=${user.id}`, (error, response, body) => {
+                if (error) {
+                  console.error(error);
+                  response.status(500).send('Error occurred');
+                } else {
+                  result.owners = body.name;
+                  result.email = body.email;
+                  console.log('response response', body);
+                  outRes.send(result);
+                }
+              });
+          }
+        })
+        outRes.end();
+        console.log('outRes outRes', result);
     });
-
     res.on("error", function (error) {
       console.error(error);
     });
