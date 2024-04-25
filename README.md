@@ -52,8 +52,8 @@ To get started with Split IO Police, follow these simple steps:
 
 1. Clone this repository: `git clone https://github.com/temitopeog/feature-flag-debt-manager.git`
 2. Install dependencies: `npm install`
-3. Configure your angular settings: Modify/create the `environments/environment.ts` file to suit your environment with the `apiUrl` pointing to the NodeJS server.
-4. Configure `.env` file under `flag-debt-server` folder to contain `splitAdminApikey`, `splitBaseUrl`, `teamsWebhookUrl` & `teamsHostName` & if you are using slack, `slackBaseUrl`, `slackAccessToken`
+3. Configure your angular settings: Modify/create the `environments/environment.ts` file to suit your environment with the `apiUrl: 'http://localhost:3000'` or equivalent port pointing to the NodeJS server.
+4. Configure `.env` file under `flag-debt-server` folder to contain `splitAdminApikey`, `splitBaseUrl =https://api.split.io/internal/api/v2`, `teamsWebhookUrl` & `teamsHostName` & if you are using slack, `slackBaseUrl`, `slackAccessToken`
 5. Start the angular app: `npm start`, navigate to `http://localhost:4200/home`
 6. Configure your server settings: Modify the `flag-debt-server/.env` file to suit your environment.
 7. Install & Start the server application:  `npm install` & `npm start`
