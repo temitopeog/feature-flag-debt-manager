@@ -50,14 +50,27 @@ Split IO Police is a powerful tool designed to help development teams effectivel
 
 To get started with Split IO Police, follow these simple steps:
 
+--- Angular client configuration ---
+
 1. Clone this repository: `git clone https://github.com/temitopeog/feature-flag-debt-manager.git`
-2. Install dependencies: `npm install`
-3. Configure your angular settings: Modify/create the `environments/environment.ts` file to suit your environment with the `apiUrl: 'http://localhost:3000'` or equivalent port pointing to the NodeJS server.
-4. Configure `.env` file under `flag-debt-server` folder to contain `splitAdminApikey`, `splitBaseUrl =https://api.split.io/internal/api/v2`, `teamsWebhookUrl` & `teamsHostName` & if you are using slack, `slackBaseUrl`, `slackAccessToken`
-5. Start the angular app: `npm start`, navigate to `http://localhost:4200/home`
-6. Configure your server settings: Modify the `flag-debt-server/.env` file to suit your environment.
-7. Install & Start the server application:  `npm install` & `npm start`
-8. Start the server app, default is  `http://localhost:3000` & navigate to angular application
+2. cd into flag-debt-dashboard folder and run `npm install` to install angular dependencies
+3. Configure your angular settings: 
+ i. Create the folder & file`environments/environment.ts` under `src` folder. Add the below
+ ii. export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3000', // or equivalent port pointing to the NodeJS server.
+  ngrok: ''
+ }
+
+--- Server configuration ---
+4. Change directory to `flag-debt-server` folder at the root, run `npm install` and create a `.env` file.
+  i. Add your Split admin api key e.g. `splitAdminApikey = xxxxxx`, 
+  ii. Add Split Base URL e.g. `splitBaseUrl=https://api.split.io/internal/api/v2`, 
+  The rest are optional for Teams & Slack as shown below:
+  iii. Team `teamsWebhookUrl=xxx`
+  iv. Teams Hostname `teamsHostName=xxxxxx` & if you are using slack, `slackBaseUrl=xxxxxx`, `slackAccessToken=xxxxx`
+5. Start the server app `npm start`
+5. CD back to the root folder and start the angular client app: `npm start`, navigate to `http://localhost:4200`
 
 ## Slack
 - **Slack base URL:** https://slack.com/api/chat.postMessage
