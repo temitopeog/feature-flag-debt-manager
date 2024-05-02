@@ -54,24 +54,24 @@ To get started with Split IO Police, follow these simple steps:
 
 1. Clone this repository: `git clone https://github.com/temitopeog/feature-flag-debt-manager.git`
 2. cd into flag-debt-dashboard folder and run `npm install` to install angular dependencies
-3. Configure your angular settings: \n
- i. Create the folder & file`environments/environment.ts` under `src` folder. Add the below \n
+3. Configure your angular settings: <br>
+ i. Create the folder & file`environments/environment.ts` under `src` folder. Add the below <br>
  ii. export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000', // or equivalent port pointing to the NodeJS server.
   ngrok: ''
  }
 
---- Server configuration --- \n
+--- Server configuration --- <br>
 
-4. Change directory to `flag-debt-server` folder at the root, run `npm install` and create a `.env` file. \n
-  i. Add your Split admin api key e.g. `splitAdminApikey = xxxxxx`, \n
-  ii. Add Split Base URL e.g. `splitBaseUrl=https://api.split.io/internal/api/v2`, \n
-  The rest are optional for Teams & Slack as shown below: \n
-  iii. Team `teamsWebhookUrl=xxx` \n
-  iv. Teams Hostname `teamsHostName=xxxxxx` & if you are using slack, `slackBaseUrl=xxxxxx`, `slackAccessToken=xxxxx` \n
+4. Change directory to `flag-debt-server` folder at the root, run `npm install` and create a `.env` file. <br>
+  i. Add your Split admin api key e.g. `splitAdminApikey = xxxxxx`, <br>
+  ii. Add Split Base URL e.g. `splitBaseUrl=https://api.split.io/internal/api/v2`, <br>
+  The rest are optional for Teams & Slack as shown below: <br>
+  iii. Team `teamsWebhookUrl=xxx` <br>
+  iv. Teams Hostname `teamsHostName=xxxxxx` & if you are using slack, `slackBaseUrl=xxxxxx`, `slackAccessToken=xxxxx` <br>
 
-5. Start the server app `npm start` \n
+5. Start the server app `npm start` <br>
 6. CD back to the root folder and start the angular client app: `npm start`, navigate to `http://localhost:4200`
 
 ## Slack
