@@ -31,6 +31,7 @@ import { FlagsComponent } from './components/flags/flags.component';
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     MatTableModule,
     MatFormFieldModule,
     MatCardModule,
@@ -47,8 +48,7 @@ import { FlagsComponent } from './components/flags/flags.component';
     MatSelectModule,
     HttpClientModule,
     MatToolbarModule,
-    MatInputModule,
-    AppRoutingModule
+    MatInputModule
   ],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
